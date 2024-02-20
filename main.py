@@ -1,8 +1,13 @@
 import configparser
 import os
+import platform
 import subprocess
 import sys
 import time
+import urllib.request
+import zipfile
+
+from colorama import Fore, Style
 import questionary
 
 new_user = False
@@ -29,6 +34,8 @@ foocus = False
 kohya = False
 volta = False
 gpt = False
+
+git_path = "git"
 
 
 def checkPreferences(startup, a):
@@ -60,6 +67,23 @@ settings = checkPreferences(False, 0)
 globals().update(settings)
 
 
+def update_progress(count, block_size, total_size):
+    progress = count * block_size / total_size
+    bar_length = 100
+    if progress >= 1:
+        progress = 1
+        bar = '[' + Fore.GREEN + '=' * bar_length + Style.RESET_ALL + ']'
+        percentage = Fore.GREEN + '100%' + Style.RESET_ALL
+    else:
+        block = int(round(bar_length * progress))
+        blue_blocks = int(round(bar_length * progress)) - 1
+        bar = '[' + Fore.BLUE + '=' * blue_blocks + Style.RESET_ALL + '=' + '>' + ' ' * (bar_length - block) + ']'
+        percentage = '{}%'.format(int(progress * 100))
+
+    # Use '\r' to move the cursor back to the beginning of the line
+    print('\rDownloading Git: {} {}'.format(bar, percentage), end='', flush=True)
+
+
 def main():
     global new_user, ask_again
 
@@ -70,11 +94,13 @@ def main():
             new_user = True
             ask_again = questionary.confirm("Would you like to display this message every startup?").ask()
             savePreferences()
+            checkRequirements()
             usedBefore()
         else:
             new_user = False
             ask_again = questionary.confirm("Would you like to display this message every startup?").ask()
             savePreferences()
+            checkRequirements()
             newUser()
 
     else:
@@ -82,6 +108,58 @@ def main():
             usedBefore()
         else:
             newUser()
+
+
+def checkRequirements():
+    # Check Python version
+    python_version = platform.python_version()
+    major, minor, micro = python_version.split('.')
+    if major == '3' and minor == '10':
+        print(f"Python version: {python_version}")
+    else:
+        print()
+        print()
+        print(
+            Fore.RED + f"Warning: Your Python version is {python_version}. Most versions of Stable Diffusion are "
+                       f"designed to work with Python 3.10 and may not start without it" + Style.RESET_ALL)
+        print()
+        print()
+
+
+    # Check if Git is installed
+    try:
+        try:
+            subprocess.check_output(["git", "--version"])
+            print("Git is installed.")
+        except:
+            subprocess.check_output(["./git/cmd/git.exe", "--version"])
+            print("Git is installed locally.")
+            global git_path
+            git_path = "./git/cmd/git.exe"
+
+    except:
+        print("Git is not installed.")
+        # Prompt the user to install Git
+        install_git = questionary.confirm("Would you like to install Git?").ask()
+        if install_git:
+            git_url = "https://github.com/git-for-windows/git/releases/download/v2.44.0-rc1.windows.1/MinGit-2.44.0-rc1-64-bit.zip"
+            filename = git_url.split("/")[-1]
+            urllib.request.urlretrieve(git_url, filename, reporthook=update_progress)
+            print("\nGit downloaded. Extracting Git...")
+
+            # Create a "git" subdirectory in the script's directory
+            script_dir = os.path.dirname(os.path.realpath(__file__))
+            git_dir = os.path.join(script_dir, "git")
+            os.makedirs(git_dir, exist_ok=True)
+
+            # Extract the Git zip file to the "git" subdirectory
+            with zipfile.ZipFile(filename, 'r') as zip_ref:
+                zip_ref.extractall(git_dir)
+
+            git_path = os.path.join(git_dir, "cmd", "git.exe")
+
+            print("Git extracted. ")
+            return
 
 
 def runBat(file_path, window_title, args=None):
@@ -260,7 +338,8 @@ def usedBefore():
             while True:
                 version = questionary.select(
                     "What would you like to install?",
-                    choices=["Automatic1111", "ComfyUI", "Invoke", "Ruined Fooocus", "Kohya SS", "Volta ML", "GPT Web", "Back"]
+                    choices=["Automatic1111", "ComfyUI", "Invoke", "Ruined Fooocus", "Kohya SS", "Volta ML", "GPT Web",
+                             "Back"]
                 ).ask()
                 if version == "Back":
                     break
@@ -294,7 +373,8 @@ def usedBefore():
             while True:
                 version = questionary.select(
                     "What would you like to run?",
-                    choices=["Automatic1111", "ComfyUI", "Invoke", "Ruined Fooocus", "Kohya SS", "Volta ML", "GPT Web", "Back"]
+                    choices=["Automatic1111", "ComfyUI", "Invoke", "Ruined Fooocus", "Kohya SS", "Volta ML", "GPT Web",
+                             "Back"]
                 ).ask()
                 if version == "Back":
                     break
@@ -367,7 +447,7 @@ def run(selected_version, settings):
 def install(id):
     if id == 1:
         print("Installing Automatic1111...")
-        time.sleep(1)
+
     if id == 2:
         print("Installing ComfyUI...")
         time.sleep(1)
