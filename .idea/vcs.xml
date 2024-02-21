@@ -2,5 +2,13 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ComfyUI" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/SD/Automatic1111" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/SD/ComfyUI" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/SD/GPT-Web" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/SD/Kohya-SS" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/SD/Ruined-Fooocus" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/SD/Volta-ML" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/conda/SD/Ruined-Fooocus" vcs="Git" />
   </component>
 </project>
