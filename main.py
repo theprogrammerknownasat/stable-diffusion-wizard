@@ -1478,6 +1478,7 @@ def usedBefore():
                 print("1. A better way to install dependencies.")
                 print("2. Executables for Windows and Linux.")
                 print("3. Bug fixes.")
+                print("4. Add webserver for launching, installing, and files.")
                 print("\n\n")
                 break
             elif action == "Exit":

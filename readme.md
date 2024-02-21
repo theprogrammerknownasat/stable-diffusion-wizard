@@ -25,6 +25,7 @@ When you run `main.py`, you will be presented with a menu of options:
 
 ## Coming Soon
 
+- Add webserver for launching, installing, and files.
 - Compiled executables for Windows and Linux: We're working on providing compiled executables for Windows and Linux to make the installation process even easier. Stay tuned for updates!
 
 ## Contributing
