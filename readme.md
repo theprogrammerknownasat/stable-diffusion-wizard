@@ -12,7 +12,9 @@ Stable Helper is a Python script that simplifies the installation and usage of v
 ## Installation
 
 1. Clone this repository to your local machine: `git clone https://github.com/theprogrammerknownasat/stable-helper.git`
-2. Run `main.py`
+2. Run `python main.py`
+
+   If this gives you an error, please run `pip install questionary colorama zipfile`
 
 ## Usage
 
